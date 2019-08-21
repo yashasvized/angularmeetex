@@ -1,0 +1,64 @@
+<nav class="navbar navbar-light bg-light" style="margin-bottom: 20px;">
+    <span class="navbar-brand mb-0 h1">Meetex</span>
+  </nav>
+
+<div class="container-fluid">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-5 col-md-10 col-sm-12">
+        <h1>Meetex</h1>
+        <h3>See your schedule of the meetings and plan them with people.</h3>
+        <h3></h3>
+      </div>
+      <div class="col-lg-5 col-md-10" style="margin-bottom: 10px;">
+        <div class="form-thing p-2 border border-primary rounded">
+          <h2 class="form-signin-heading">Sign Up</h2>
+          <br>
+          <span>UserName: </span>
+          <label for="inputFirstName" class="sr-only">FirstName</label>
+          <input [ngClass]="{err:!first.valid && first.touched}" type="text" id="inputFirstName" class="form-control"
+            [(ngModel)]="userName" placeholder="FirstName" #first="ngModel" required autofocus>
+          <span class="help-block" *ngIf="!first.valid && first.touched">Please enter First Name</span>
+          <br>
+          <select name="country" id="county" #country="ngModel" class="form-control" [(ngModel)]="dial">
+            <option value="undefined" disabled selected>Please select country</option>
+            <option *ngFor="let country of countries" value='{{country.dial_code}}'>{{country.name}}</option>
+          </select>
+          <span class="help-block" *ngIf="!country.valid && country.touched">Please select country</span>
+          <br>
+          <span>Mobile: </span>
+          <div class="row p-0">
+            <div class="col-3 p-0">
+              <input style="margin-left: 12px" type="text" class="form-control" id="code" value='{{dial}}' disabled>
+            </div>
+            <div class="col-9 p-0">
+              <label for="inputMobile" class="sr-only">Mobile</label>
+              <input style="width: 96%" [ngClass]="{err:!mobiles.valid && mobiles.touched}" type="number" id="inputMobile"
+                class="form-control" [(ngModel)]="mobile" placeholder="Mobile" #mobiles="ngModel" required>
+              <span class="help-block" *ngIf="!mobiles.valid && mobiles.touched">Please enter Mobile Number</span>
+            </div>
+          </div>
+          <br>
+          <span>Email: </span>
+          <label for="inputEmail" class="sr-only">Email address</label>
+          <input [ngClass]="{err:!emaill.valid && emaill.touched}" type="email" id="inputEmail" class="form-control"
+            [(ngModel)]="email" placeholder="Email address" #emaill="ngModel" email required>
+          <span class="help-block" *ngIf="!emaill.valid && emaill.touched">Please enter valid email</span>
+          <br>
+          <span>Password: </span>
+          <label for="inputPassword" class="sr-only">Password</label>
+          <input [ngClass]="{err:!pass.valid && pass.touched}" type="password" id="inputPassword" class="form-control"
+            [(ngModel)]="password" #pass="ngModel" placeholder="Password" required>
+          <span class="help-block" *ngIf="!pass.valid && pass.touched">Please enter Password</span>
+          <br>
+          <span>Are you admin?  <input type="checkbox"
+            [(ngModel)]="isadmin"> </span>
+          <br>
+          <a routerLink="/">Already a User,Sign in</a>
+          <button class="btn btn-lg btn-primary btn-block" type="button" (click)="signupFunction()">Sign Up</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>

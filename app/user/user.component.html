@@ -1,0 +1,163 @@
+<app-header style="margin-bottom: 30px"></app-header>
+
+<div *ngIf="load" class="d-flex justify-content-center" style="margin-top: 200px">
+  <div class="spinner-border" role="status" >
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+<span *ngIf="load" class="d-flex justify-content-center">Loading...</span>
+<div  class="row text-center" style="margin-top: 30px">
+    <div class="col-md-4">
+      <div class="btn-group">
+        <button
+          class="btn btn-primary"
+          [disabled]="month"
+          mwlCalendarPreviousView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          Previous
+        </button>
+        <div
+          class="btn btn-outline-secondary"
+          mwlCalendarToday
+          [(viewDate)]="viewDate"
+        >
+          Today
+        </div>
+        <button
+          class="btn btn-primary"
+          [disabled]="month1"
+          mwlCalendarNextView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          Next
+      </button>
+      </div>
+    </div>
+    <div class="col-md-4">
+       
+      <h3 style=" cursor: pointer; " bsDatepicker [minDate]="minDate"
+      [maxDate]="maxDate" [bsConfig]="{dateInputFormat: 'MM/YYYY'}" (onShown)="onOpenCalendar($event)">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+    </div>
+    <div class="col-md-4">
+      Meetings not overlapping:
+      <i class="material-icons" style="color: red;display:inline-block;vertical-align: middle">brightness_1</i>
+      <br>
+      Meetings overlapping:
+      <i class="material-icons" style="color: yellow;display:inline-block;vertical-align: middle">brightness_1</i>
+    </div>
+  </div>
+  <br />
+  <div *ngIf="!load" class="container" style="margin-bottom: 50px">
+  <div [ngSwitch]="view">
+    <mwl-calendar-month-view
+    style="height: 10px"
+      *ngSwitchCase="CalendarView.Month"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      (click)="openModal(template)"
+      (dayClicked)="dayClicked($event.day)"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-month-view>
+    <mwl-calendar-week-view
+      *ngSwitchCase="CalendarView.Week"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-week-view>
+    <mwl-calendar-day-view
+      *ngSwitchCase="CalendarView.Day"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-day-view>
+  </div>
+</div>
+
+  
+  <ng-template #modalContent let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title">Event action occurred</h5>
+      <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        Action:
+        <pre>{{ modalData?.action }}</pre>
+      </div>
+      <div>
+        Event:
+        <pre>{{ modalData?.event | json }}</pre>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="close()">
+        OK
+      </button>
+    </div>
+  </ng-template>
+ 
+  <ng-template #template>
+    <div class="mod">
+    <div class="modal-header" >
+      <h4 class="modal-title pull-left">Timeline for meetings</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="selectedDay.length>0">
+          <div *ngIf="loadchart" class="d-flex justify-content-center" style="margin-top: 200px">
+              <div class="spinner-border" role="status" >
+                <span class="sr-only">Loading chart...</span>
+              </div>
+            </div>
+            <span *ngIf="loadchart" class="d-flex justify-content-center">Loading chart...</span>
+          <google-chart (chartReady)='ready($event)' [data]="timelineChartData"></google-chart>
+      </div>
+      <div *ngFor="let eve of selectedDay;let i = index">
+        <div class="row">
+          <div class="col-lg-12">
+              Name - {{eve.title}}<button class="btn-sm float-right btn-primary" (click)="modalRef.hide()" (click) = "editplan(eve)">{{plan}}</button><button class="btn-sm btn-danger float-right" *ngIf="admin == 'true'" (click)="delete(eve,i)">Delete</button>
+          </div>
+        </div>
+      </div>
+      <button *ngIf="admin == 'true'" class="btn btn-success" (click)="gotodetailsPage()" (click)="modalRef.hide()">Create a new plan</button>
+    </div>
+  </div>
+  </ng-template>
+
+  <div  *ngIf="isModalShown" [config]="{ show: true,backdrop: 'static', keyboard: false }" (onHidden)="onHidden()" bsModal #autoShownModal="bs-modal" [config]="{backdrop: 'static',  keyboard: false}" 
+  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-auto-name">
+  <div  class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-auto-name" class="modal-title pull-left">Meeting alert!</h4>
+      </div>
+      <div class="modal-body text-center">
+        <p *ngFor="let curr of alertmeet">Confirm the meeting <b>{{curr.title}}</b> at {{curr.start}}</p>
+        <button type="button" class="btn btn-danger" (click)="confirm()" style="margin-right: 2px">Snooze</button>
+        <button type="button" class="btn btn-primary" (click)="decline()" >Accept</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="chart_div"></div>
+ 
+    

@@ -1,0 +1,43 @@
+<nav class="navbar navbar-light bg-light" style="margin-bottom: 20px;">
+    <span class="navbar-brand mb-0 h1">Meetex</span>
+  </nav>
+
+<div class="container-fluid">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 col-md-10 col-sm-12">
+        <h1>Meetex</h1>
+        <h3>Plan meetings for everyone</h3>
+      </div>
+      <div class="col-lg-4 col-md-10">
+        <div class="form-thing border border-primary rounded p-2">
+          <h2 class="form-signin-heading">Login</h2>
+          <br>
+          <span>Email: </span>
+          <label for="inputEmail" class="sr-only">Email address</label>
+          <input type="email" (input)="onSearchChange($event.target.value)" id="inputEmail" class="form-control"
+            [(ngModel)]="email" placeholder="Email address" email #emaill="ngModel"
+            [ngClass]="{err:!emaill.valid && emaill.touched}" required>
+          <span class="help-block" *ngIf="!emaill.valid && emaill.touched">Please enter valid email</span>
+          <br>
+          <span>Password: </span>
+          <label for="inputPassword" class="sr-only">Password</label>
+          <input type="password" (input)="onSearchChange($event.target.value)" [ngClass]="{err:error}"
+            id="inputPassword" class="form-control" [(ngModel)]="password" placeholder="Password" #pass="ngModel"
+            required>
+          <span class="help-block" *ngIf="error">{{error}}</span>
+          <span class="help-block" style="color: red" *ngIf="empty">{{empty}},Please sign up</span>
+          <br>
+          <a routerLink="/forget">Forgot your password?</a>
+          <br>
+          <br>
+          <a routerLink="/signup">New User,Sign up</a>
+          <br>
+          <br>
+          <button class="btn btn-lg btn-primary btn-block" type="button" (click)="login()">Login</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
